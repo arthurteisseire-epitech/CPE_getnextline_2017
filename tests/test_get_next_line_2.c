@@ -17,11 +17,11 @@ void close_file(void);
 
 void open_file_2(void)
 {
-	fd_2 = open("long_text", O_RDONLY);
+	fd_2 = open("long_line", O_RDONLY);
 	cr_redirect_stdout();
 }
 
-Test(get_next_line, long_text, .init = open_file_2, .fini = close_file)
+Test(get_next_line, long_line, .init = open_file_2, .fini = close_file)
 {
 	char *expected = ""
 	"Si on le rencontre peu souvent sur ce blog, "
