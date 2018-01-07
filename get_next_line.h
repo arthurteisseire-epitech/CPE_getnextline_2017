@@ -23,6 +23,6 @@ char *get_next_line(int fd);
 char *my_realloc(char *dest, char *src, int len_src);
 int my_strlen(char *str);
 int find_backspace(char *str);
-int find_last_backspace(char *str);
+int check_line(char *buffer, char **begin, char *line, int size);
 
 #endif

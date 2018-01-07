@@ -24,19 +24,31 @@ char *get_next_line(int fd)
 	while ((size = read(fd, buffer, READ_SIZE)) > 0) {
 		begin = buffer;
 		line = my_realloc(line, begin, size);
-		if (size < READ_SIZE) {
-			for (int i = 0; i < READ_SIZE; i++)
-				buffer[i] = 0;
-			line[find_last_backspace(line)] = '\0';
+		if (check_line(buffer, &begin, line, size))
 			return (line);
-		}
-		if ((index = find_backspace(line)) != -1) {
-			line[index] = '\0';
-			begin += find_backspace(begin) + 1;
-			return (line);
-		}
 	}
 	return (NULL);
+}
+
+int check_line(char *buffer, char **begin, char *line, int size)
+{
+	int index;
+	int last_backspace = my_strlen(line);
+
+	while (last_backspace > 0 && line[last_backspace] != '\n')
+		last_backspace--;
+	if (size < READ_SIZE) {
+		for (int i = 0; i < READ_SIZE; i++)
+			buffer[i] = '\0';
+		line[last_backspace] = '\0';
+		return (1);
+	}
+	if ((index = find_backspace(line)) != -1) {
+		line[index] = '\0';
+		*begin += find_backspace(*begin) + 1;
+		return (1);
+	}
+	return (0);
 }
 
 char *my_realloc(char *dest, char *src, int len_src)
@@ -58,18 +70,6 @@ char *my_realloc(char *dest, char *src, int len_src)
 	if (*dest != '\0')
 		free(dest);
 	return (res);
-}
-
-int find_last_backspace(char *str)
-{
-	int i = my_strlen(str);
-
-	while (i > 0) {
-		if (str[i] == '\n')
-			return (i);
-		i--;
-	}
-	return (-1);
 }
 
 int find_backspace(char *str)
@@ -95,7 +95,7 @@ int my_strlen(char *str)
 
 int main(void)
 {
-	int fd = open("/dev/urandom", O_RDONLY);
+	int fd = open("get_next_line.c", O_RDONLY);
 	char *src;
 
 	for (int i = 0; (src = get_next_line(fd)); i++) {
