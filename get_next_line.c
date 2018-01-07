@@ -27,6 +27,7 @@ char *get_next_line(int fd)
 		if (size < READ_SIZE) {
 			for (int i = 0; i < READ_SIZE; i++)
 				buffer[i] = 0;
+			line[find_backspace(line)] = '\0';
 			return (line);
 		}
 		if ((index = find_backspace(line)) != -1) {
