@@ -15,25 +15,25 @@ char *get_next_line(int fd)
 	int index;
 	int size;
 
-	buffer[READ_SIZE] = '\0';
 	if ((index = find_backspace(begin)) != -1) {
 		line = my_realloc(line, begin, index);
 		begin += index + 1;
 		return (line);
 	}
 	line = my_realloc(line, begin, my_strlen(buffer));
-	while ((size = read(fd, buffer, READ_SIZE)) == READ_SIZE) {
+	while ((size = read(fd, buffer, READ_SIZE)) > 0) {
 		begin = buffer;
 		line = my_realloc(line, begin, size);
+		if (size < READ_SIZE) {
+			for (int i = 0; i < READ_SIZE; i++)
+				buffer[i] = 0;
+			return (line);
+		}
 		if ((index = find_backspace(line)) != -1) {
 			line[index] = '\0';
 			begin += find_backspace(begin) + 1;
 			return (line);
 		}
-	}
-	if (buffer[size - 1] == '\0') {
-		buffer[size - 1] = 42;
-		return (line);
 	}
 	return (NULL);
 }
@@ -83,12 +83,8 @@ int main(void)
 	int fd = open("get_next_line.h", O_RDONLY);
 	char *src;
 
-	for (int i = 0; i < 151; i++) {
-		src = get_next_line(fd);
-		if (src != NULL) {
-			printf("%s\n", src);
-			free(src);
-		}
+	for (int i = 0; (src = get_next_line(0)); i++) {
+		printf("%s\n", src);
 	}
 	close(fd);
 }
