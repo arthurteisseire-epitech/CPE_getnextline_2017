@@ -55,6 +55,8 @@ char *my_realloc(char *dest, char *src, int len_src)
 		i++;
 	}
 	res[len_dest + i] = '\0';
+	if (*dest != '\0')
+		free(dest);
 	return (res);
 }
 
@@ -93,11 +95,12 @@ int my_strlen(char *str)
 
 int main(void)
 {
-	int fd = open("get_next_line.h", O_RDONLY);
+	int fd = open("/dev/urandom", O_RDONLY);
 	char *src;
 
-	for (int i = 0; (src = get_next_line(0)); i++) {
+	for (int i = 0; (src = get_next_line(fd)); i++) {
 		printf("%s\n", src);
+		free(src);
 	}
 	close(fd);
 }
