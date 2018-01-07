@@ -92,15 +92,3 @@ int my_strlen(char *str)
 		i++;
 	return (i);
 }
-
-int main(void)
-{
-	int fd = open("get_next_line.c", O_RDONLY);
-	char *src;
-
-	for (int i = 0; (src = get_next_line(fd)); i++) {
-		printf("%s\n", src);
-		free(src);
-	}
-	close(fd);
-}

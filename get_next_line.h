@@ -15,10 +15,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <fcntl.h>
-#include <stdio.h>
-
-
 char *get_next_line(int fd);
 char *my_realloc(char *dest, char *src, int len_src);
 int my_strlen(char *str);
