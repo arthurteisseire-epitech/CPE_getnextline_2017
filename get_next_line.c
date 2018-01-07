@@ -27,7 +27,7 @@ char *get_next_line(int fd)
 		if (size < READ_SIZE) {
 			for (int i = 0; i < READ_SIZE; i++)
 				buffer[i] = 0;
-			line[find_backspace(line)] = '\0';
+			line[find_last_backspace(line)] = '\0';
 			return (line);
 		}
 		if ((index = find_backspace(line)) != -1) {
@@ -56,6 +56,18 @@ char *my_realloc(char *dest, char *src, int len_src)
 	}
 	res[len_dest + i] = '\0';
 	return (res);
+}
+
+int find_last_backspace(char *str)
+{
+	int i = my_strlen(str);
+
+	while (i > 0) {
+		if (str[i] == '\n')
+			return (i);
+		i--;
+	}
+	return (-1);
 }
 
 int find_backspace(char *str)
