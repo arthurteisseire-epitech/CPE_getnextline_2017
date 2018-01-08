@@ -11,9 +11,9 @@ char *get_next_line(int fd)
 {
 	static char buffer[READ_SIZE] = "";
 	static char *begin = buffer;
+	static int size = READ_SIZE;
 	char *line = "";
 	int index;
-	int size;
 
 	if ((index = find_backspace(begin)) != -1) {
 		line = my_realloc(line, begin, index);
@@ -21,12 +21,14 @@ char *get_next_line(int fd)
 		return (line);
 	}
 	line = my_realloc(line, begin, my_strlen(buffer));
-	while ((size = read(fd, buffer, READ_SIZE)) > 0) {
+	while (size == READ_SIZE) {
+		size = read(fd, buffer, READ_SIZE);
 		begin = buffer;
 		line = my_realloc(line, begin, size);
-		if (check_line(buffer, &begin, line, size) || size < READ_SIZE)
+		if (check_line(&begin, line, size))
 			return (line);
 	}
+	free(line);
 	return (NULL);
 }
 
@@ -51,20 +53,14 @@ char *my_realloc(char *dest, char *src, int len_src)
 	return (res);
 }
 
-int check_line(char *buffer, char **begin, char *line, int size)
+int check_line(char **begin, char *line, int size)
 {
 	int index;
 	int last_backspace = my_strlen(line);
 
 	while (last_backspace > 0 && line[last_backspace] != '\n')
 		last_backspace--;
-	if (size < READ_SIZE) {
-		for (int i = 0; i < READ_SIZE; i++)
-			buffer[i] = '\0';
-		line[last_backspace] = '\0';
-		return (1);
-	}
-	if ((index = find_backspace(line)) != -1) {
+	if ((index = find_backspace(line)) != -1 || size < READ_SIZE) {
 		line[index] = '\0';
 		*begin += find_backspace(*begin) + 1;
 		return (1);
