@@ -24,7 +24,7 @@ char *get_next_line(int fd)
 	while ((size = read(fd, buffer, READ_SIZE)) > 0) {
 		begin = buffer;
 		line = my_realloc(line, begin, size);
-		if (check_line(buffer, &begin, line, size))
+		if (check_line(buffer, &begin, line, size) || size < READ_SIZE)
 			return (line);
 	}
 	return (NULL);
