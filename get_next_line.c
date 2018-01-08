@@ -35,12 +35,12 @@ char *my_realloc(char *dest, char *src, int len_src)
 	int len_dest = my_strlen(dest);
 	char *res = malloc(sizeof(char) * (len_dest + len_src + 1));
 	int i = 0;
-	int j = 0;
 
-	while (dest[j] != '\0') {
-		res[j] = dest[j];
-		j++;
+	while (dest[i] != '\0') {
+		res[i] = dest[i];
+		i++;
 	}
+	i = 0;
 	while (i < len_src) {
 		res[len_dest + i] = src[i];
 		i++;

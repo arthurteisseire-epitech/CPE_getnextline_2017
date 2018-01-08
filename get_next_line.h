@@ -9,7 +9,7 @@
 #define GET_NEXT_LINE_H
 
 #ifndef READ_SIZE
-#	define READ_SIZE 10
+#	define READ_SIZE 1
 #endif
 
 #include <stdlib.h>
