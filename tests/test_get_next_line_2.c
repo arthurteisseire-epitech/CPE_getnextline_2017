@@ -11,18 +11,9 @@
 #include <fcntl.h>
 #include "get_next_line.h"
 
-int fd_2 = -1;
-
-void close_file(void);
-
-void open_file_2(void)
+Test(get_next_line, long_line)
 {
-	fd_2 = open("long_line", O_RDONLY);
-	cr_redirect_stdout();
-}
-
-Test(get_next_line, long_line, .init = open_file_2, .fini = close_file)
-{
+	int fd = open("long_line", O_RDONLY);
 	char *expected = ""
 	"Si on le rencontre peu souvent sur ce blog, "
 	"c’est aussi parce qu’il serait difficile de "
@@ -32,7 +23,8 @@ Test(get_next_line, long_line, .init = open_file_2, .fini = close_file)
 	"est moins bien et moins vite supporté, il y a moins "
 	"d’applications disponibles et il se destine surtout "
 	"au monde des serveurs. Mais rien ne dit qu’un jour, vous aussi…";
-	char *got = get_next_line(fd_2);
+	char *got = get_next_line(fd);
 
 	cr_assert_str_eq(got ,expected);
+	close(fd);
 }
