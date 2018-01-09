@@ -5,6 +5,9 @@
 ** by Arthur Teisseire
 */
 
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
 #include "get_next_line.h"
 
 char *get_next_line(int fd)
@@ -12,11 +15,13 @@ char *get_next_line(int fd)
 	static char buffer[READ_SIZE] = "";
 	static char *begin = buffer;
 	static int size = READ_SIZE;
-	char *line = "";
+	char *line = malloc(1);
 	int index;
 
+	*line = 0;
 	if ((index = find_backspace(begin)) != -1) {
 		line = my_realloc(line, begin, index);
+		line[index] = '\0';
 		begin += index + 1;
 		return (line);
 	}
@@ -30,6 +35,19 @@ char *get_next_line(int fd)
 	}
 	free(line);
 	return (NULL);
+}
+
+int check_line(char **begin, char *line, int size)
+{
+	int index;
+
+	if ((index = find_backspace(line)) != -1 || size < READ_SIZE) {
+		index = index == -1 ? 0 : index;
+		line[index] = '\0';
+		*begin += find_backspace(*begin) + 1;
+		return (1);
+	}
+	return (0);
 }
 
 char *my_realloc(char *dest, char *src, int len_src)
@@ -48,24 +66,8 @@ char *my_realloc(char *dest, char *src, int len_src)
 		i++;
 	}
 	res[len_dest + i] = '\0';
-	if (*dest != '\0')
-		free(dest);
+	free(dest);
 	return (res);
-}
-
-int check_line(char **begin, char *line, int size)
-{
-	int index;
-	int last_backspace = my_strlen(line);
-
-	while (last_backspace > 0 && line[last_backspace] != '\n')
-		last_backspace--;
-	if ((index = find_backspace(line)) != -1 || size < READ_SIZE) {
-		line[index] = '\0';
-		*begin += find_backspace(*begin) + 1;
-		return (1);
-	}
-	return (0);
 }
 
 int find_backspace(char *str)
