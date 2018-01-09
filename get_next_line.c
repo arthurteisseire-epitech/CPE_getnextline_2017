@@ -11,23 +11,40 @@ char *get_next_line(int fd)
 {
 	static char buffer[READ_SIZE] = "";
 	static char *begin = buffer;
-	char *line = "";
+	static int size = READ_SIZE;
+	char *line = malloc(1);
 	int index;
-	int size;
 
+	*line = 0;
 	if ((index = find_backspace(begin)) != -1) {
 		line = my_realloc(line, begin, index);
+		line[index] = '\0';
 		begin += index + 1;
 		return (line);
 	}
 	line = my_realloc(line, begin, my_strlen(buffer));
-	while ((size = read(fd, buffer, READ_SIZE)) > 0) {
+	while (size == READ_SIZE) {
+		size = read(fd, buffer, READ_SIZE);
 		begin = buffer;
 		line = my_realloc(line, begin, size);
-		if (check_line(buffer, &begin, line, size) || size < READ_SIZE)
+		if (check_line(&begin, line, size))
 			return (line);
 	}
+	free(line);
 	return (NULL);
+}
+
+int check_line(char **begin, char *line, int size)
+{
+	int index;
+
+	if ((index = find_backspace(line)) != -1 || size < READ_SIZE) {
+		index = index == -1 ? 0 : index;
+		line[index] = '\0';
+		*begin += find_backspace(*begin) + 1;
+		return (1);
+	}
+	return (0);
 }
 
 char *my_realloc(char *dest, char *src, int len_src)
@@ -35,41 +52,19 @@ char *my_realloc(char *dest, char *src, int len_src)
 	int len_dest = my_strlen(dest);
 	char *res = malloc(sizeof(char) * (len_dest + len_src + 1));
 	int i = 0;
-	int j = 0;
 
-	while (dest[j] != '\0') {
-		res[j] = dest[j];
-		j++;
+	while (dest[i] != '\0') {
+		res[i] = dest[i];
+		i++;
 	}
+	i = 0;
 	while (i < len_src) {
 		res[len_dest + i] = src[i];
 		i++;
 	}
 	res[len_dest + i] = '\0';
-	if (*dest != '\0')
-		free(dest);
+	free(dest);
 	return (res);
-}
-
-int check_line(char *buffer, char **begin, char *line, int size)
-{
-	int index;
-	int last_backspace = my_strlen(line);
-
-	while (last_backspace > 0 && line[last_backspace] != '\n')
-		last_backspace--;
-	if (size < READ_SIZE) {
-		for (int i = 0; i < READ_SIZE; i++)
-			buffer[i] = '\0';
-		line[last_backspace] = '\0';
-		return (1);
-	}
-	if ((index = find_backspace(line)) != -1) {
-		line[index] = '\0';
-		*begin += find_backspace(*begin) + 1;
-		return (1);
-	}
-	return (0);
 }
 
 int find_backspace(char *str)
