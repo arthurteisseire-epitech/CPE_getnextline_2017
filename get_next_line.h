@@ -9,7 +9,7 @@
 #define GET_NEXT_LINE_H
 
 #ifndef READ_SIZE
-#	define READ_SIZE 1
+#	define READ_SIZE 4096
 #endif
 
 #include <stdlib.h>
@@ -19,6 +19,6 @@ char *get_next_line(int fd);
 char *my_realloc(char *dest, char *src, int len_src);
 int my_strlen(char *str);
 int find_backspace(char *str);
-int check_line(char **begin, char *line, int size);
+char *cut_line(char **begin, char *line, int size);
 
 #endif

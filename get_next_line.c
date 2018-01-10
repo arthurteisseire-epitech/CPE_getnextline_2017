@@ -16,35 +16,31 @@ char *get_next_line(int fd)
 	int index;
 
 	*line = 0;
-	if ((index = find_backspace(begin)) != -1) {
-		line = my_realloc(line, begin, index);
-		line[index] = '\0';
-		begin += index + 1;
-		return (line);
-	}
-	line = my_realloc(line, begin, my_strlen(buffer));
+	if ((index = find_backspace(begin)) != -1 && size == READ_SIZE)
+		return (cut_line(&begin, line, index));
+	line = my_realloc(line, begin, my_strlen(begin));
 	while (size == READ_SIZE) {
 		size = read(fd, buffer, READ_SIZE);
 		begin = buffer;
-		line = my_realloc(line, begin, size);
-		if (check_line(&begin, line, size))
-			return (line);
+		if ((index = find_backspace(begin)) != -1)
+			return (cut_line(&begin, line, index));
+		else if (size < READ_SIZE)
+			return (cut_line(&begin, line, size));
+		line = my_realloc(line, begin, my_strlen(begin));
 	}
-	free(line);
 	return (NULL);
 }
 
-int check_line(char **begin, char *line, int size)
+char *cut_line(char **begin, char *line, int index_bn)
 {
-	int index;
+	char *res = malloc(1);
 
-	if ((index = find_backspace(line)) != -1 || size < READ_SIZE) {
-		index = index == -1 ? 0 : index;
-		line[index] = '\0';
-		*begin += find_backspace(*begin) + 1;
-		return (1);
-	}
-	return (0);
+	*res = 0;
+	line = my_realloc(line, *begin, index_bn);
+	res = my_realloc(res, line, my_strlen(line));
+	*begin += index_bn + 1;
+	free(line);
+	return (res);
 }
 
 char *my_realloc(char *dest, char *src, int len_src)
