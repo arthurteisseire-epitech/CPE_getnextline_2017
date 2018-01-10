@@ -23,12 +23,13 @@ Test(get_next_line, long_text)
 	"d’applications disponibles et il se destine surtout\n"
 	"au monde des serveurs. Mais rien ne dit qu’un jour, vous aussi…\n";
 	char *got = get_next_line(fd);
-	char *res = "";
+	char *res = malloc(1);
 
+	*res = 0;
 	while (got) {
 		res = my_realloc(res, got, my_strlen(got));
 		res = my_realloc(res, "\n", 1);
-		free(got);
+		//free(got);
 		got = get_next_line(fd);
 	}
 	cr_assert_str_eq(res ,expected);

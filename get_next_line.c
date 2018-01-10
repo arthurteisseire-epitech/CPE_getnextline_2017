@@ -16,7 +16,7 @@ char *get_next_line(int fd)
 	int index;
 
 	*line = 0;
-	if ((index = find_backspace(begin)) != -1 && size == READ_SIZE)
+	if ((index = find_backspace(begin)) != -1)
 		return (cut_line(&begin, line, index));
 	line = my_realloc(line, begin, my_strlen(begin));
 	while (size == READ_SIZE) {
