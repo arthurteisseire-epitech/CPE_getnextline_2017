@@ -15,6 +15,8 @@ char *get_next_line(int fd)
 	char *line = malloc(1);
 	int index;
 
+	if (line == NULL)
+		return (NULL);
 	*line = 0;
 	if ((index = find_backspace(begin)) != -1)
 		return (cut_line(&begin, line, index));
@@ -28,6 +30,7 @@ char *get_next_line(int fd)
 			return (cut_line(&begin, line, size));
 		line = my_realloc(line, begin, my_strlen(begin));
 	}
+	free(line);
 	return (NULL);
 }
 
@@ -35,6 +38,8 @@ char *cut_line(char **begin, char *line, int index_bn)
 {
 	char *res = malloc(1);
 
+	if (res == NULL)
+		return (NULL);
 	*res = 0;
 	line = my_realloc(line, *begin, index_bn);
 	res = my_realloc(res, line, my_strlen(line));
@@ -49,6 +54,8 @@ char *my_realloc(char *dest, char *src, int len_src)
 	char *res = malloc(sizeof(char) * (len_dest + len_src + 1));
 	int i = 0;
 
+	if (res == NULL)
+		return (NULL);
 	while (dest[i] != '\0') {
 		res[i] = dest[i];
 		i++;
