@@ -11,9 +11,9 @@ char *get_next_line(int fd)
 {
 	static char buffer[READ_SIZE] = "";
 	static char *begin = buffer;
-	static int size = READ_SIZE;
 	char *line = malloc(1);
 	int index;
+	int size;
 
 	if (line == NULL)
 		return (NULL);
@@ -21,12 +21,11 @@ char *get_next_line(int fd)
 	if ((index = find_backspace(begin)) != -1)
 		return (cut_line(&begin, line, index));
 	line = my_realloc(line, begin, my_strlen(begin));
-	while (size == READ_SIZE) {
-		size = read(fd, buffer, READ_SIZE);
+	while ((size = read(fd, buffer, READ_SIZE)) > 0) {
 		begin = buffer;
-		if ((index = find_backspace(begin)) != -1 && size != 0)
+		if ((index = find_backspace(begin)) != -1)
 			return (cut_line(&begin, line, index));
-		else if (size < READ_SIZE && size != 0)
+		else if (size < READ_SIZE)
 			return (cut_line(&begin, line, size));
 		line = my_realloc(line, begin, my_strlen(begin));
 	}
