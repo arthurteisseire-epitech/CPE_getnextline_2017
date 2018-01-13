@@ -23,7 +23,7 @@ Test(get_next_line, short_line)
 
 Test(get_next_line, long_line)
 {
-	int fd = open("long_line", O_RDONLY);
+	int fd = open("long_line.txt", O_RDONLY);
 	char *expected = ""
 	"Si on le rencontre peu souvent sur ce blog, "
 	"c’est aussi parce qu’il serait difficile de "
@@ -41,7 +41,7 @@ Test(get_next_line, long_line)
 
 Test(get_next_line, long_text)
 {
-	int fd = open("long_text", O_RDONLY);
+	int fd = open("long_text.txt", O_RDONLY);
 	char *expected = "Si on le rencontre peu souvent sur ce blog,\n"
 	"c’est aussi parce qu’il serait difficile de\n"
 	"le conseiller de prime abord à un utilisateur\n"
@@ -64,12 +64,29 @@ Test(get_next_line, long_text)
 	close(fd);
 }
 
-Test(get_next_line, empty_line)
+Test(get_next_line, empty_file)
 {
 	int fd = open("/dev/null", O_RDONLY);
 	char *expected = NULL;
 	char *got = get_next_line(fd);
 
 	cr_assert_eq(got ,expected);
+	close(fd);
+}
+
+Test(get_next_line, empty_lines)
+{
+	int fd = open("empty_lines.txt", O_RDONLY);
+	char *expected = "";
+	char * got = get_next_line(fd);
+	char *res = malloc(1);
+
+	*res = 0;
+	while (got) {
+		res = my_realloc(res, got, my_strlen(got));
+		free(got);
+		got = get_next_line(fd);
+	}
+	cr_assert_str_eq(res ,expected);
 	close(fd);
 }
