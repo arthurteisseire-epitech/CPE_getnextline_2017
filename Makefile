@@ -17,4 +17,3 @@ fclean:
 	make fclean -C tests
 
 re:
-	make re -C tests
