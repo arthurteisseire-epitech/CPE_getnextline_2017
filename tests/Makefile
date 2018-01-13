@@ -25,8 +25,10 @@ $(NAME):	$(OBJ)
 clean:
 	rm -f *.gcno
 	rm -f *.gcna
+	rm -f *.gcda
 	rm -f $(ROOT)/*.gcno
 	rm -f $(ROOT)/*.gcna
+	rm -f $(ROOT)/*.gcda
 	rm -f $(OBJ)
 
 fclean: clean
