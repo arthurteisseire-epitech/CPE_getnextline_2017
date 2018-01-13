@@ -11,9 +11,7 @@ DSRC	=	$(ROOT)
 INC	=	$(ROOT)
 
 SRC	=	$(DSRC)/get_next_line.c
-SRC_UT	=	$(DSRC_UT)/test_get_next_line.c \
-		$(DSRC_UT)/test_get_next_line_2.c \
-		$(DSRC_UT)/test_get_next_line_3.c
+SRC_UT	=	$(DSRC_UT)/test_get_next_line.c
 CFLAGS	=	-Wall -W -Wextra -I$(INC)
 LDFLAGS	=	-lcriterion -lgcov -coverage
 OBJ	=	$(SRC_UT:.c=.o) $(SRC:.c=.o)

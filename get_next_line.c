@@ -24,9 +24,9 @@ char *get_next_line(int fd)
 	while (size == READ_SIZE) {
 		size = read(fd, buffer, READ_SIZE);
 		begin = buffer;
-		if ((index = find_backspace(begin)) != -1)
+		if ((index = find_backspace(begin)) != -1 && size != 0)
 			return (cut_line(&begin, line, index));
-		else if (size < READ_SIZE)
+		else if (size < READ_SIZE && size != 0)
 			return (cut_line(&begin, line, size));
 		line = my_realloc(line, begin, my_strlen(begin));
 	}
