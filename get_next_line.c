@@ -11,13 +11,10 @@ char *get_next_line(int fd)
 {
 	static char buffer[READ_SIZE] = "";
 	static char *begin = buffer;
-	char *line = malloc(1);
+	char *line = NULL;
 	int index;
 	int size;
 
-	if (line == NULL)
-		return (NULL);
-	*line = 0;
 	if ((index = find_backspace(begin)) != -1)
 		return (cut_line(&begin, line, index));
 	line = my_realloc(line, begin, my_strlen(begin));
@@ -55,9 +52,12 @@ char *my_realloc(char *dest, char *src, int len_src)
 
 	if (res == NULL)
 		return (NULL);
-	while (dest[i] != '\0') {
-		res[i] = dest[i];
-		i++;
+	if (dest != NULL) {
+		while (dest[i] != '\0') {
+			res[i] = dest[i];
+			i++;
+		}
+		free(dest);
 	}
 	i = 0;
 	while (i < len_src) {
@@ -65,7 +65,6 @@ char *my_realloc(char *dest, char *src, int len_src)
 		i++;
 	}
 	res[len_dest + i] = '\0';
-	free(dest);
 	return (res);
 }
 
@@ -85,6 +84,8 @@ int my_strlen(char *str)
 {
 	int i = 0;
 
+	if (str == NULL)
+		return (0);
 	while (str[i] != '\0')
 		i++;
 	return (i);
