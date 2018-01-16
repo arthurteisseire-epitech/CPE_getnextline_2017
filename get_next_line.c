@@ -9,7 +9,7 @@
 
 char *get_next_line(int fd)
 {
-	static char buffer[READ_SIZE] = "";
+	static char buffer[READ_SIZE];
 	static char *begin = buffer;
 	char *line = NULL;
 	int index;
@@ -18,6 +18,8 @@ char *get_next_line(int fd)
 	if ((index = find_backspace(begin)) != -1)
 		return (cut_line(&begin, line, index));
 	line = my_realloc(line, begin, my_strlen(begin));
+	for (int i = 0; i < READ_SIZE; i++)
+		buffer[i] = '\0';
 	while ((size = read(fd, buffer, READ_SIZE)) > 0) {
 		begin = buffer;
 		if ((index = find_backspace(begin)) != -1)
